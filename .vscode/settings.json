@@ -1,0 +1,13 @@
+{
+    "Lua.diagnostics.globals": [
+        "GetMerchantNumItems",
+        "CreateFrame",
+        "UIParent",
+        "GetMerchantItemInfo",
+        "C_CurrencyInfo",
+        "GetMerchantItemCostItem",
+        "BuyMerchantItem",
+        "UnitGUID",
+        "strsplit"
+    ]
+}

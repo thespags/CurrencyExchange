@@ -1,0 +1,6 @@
+## Interface: 30403
+## Title: CurrencyExchange
+## Version: 1
+## Author: spags
+
+core.lua
