@@ -1,6 +1,8 @@
 ## Interface: 30403
 ## Title: CurrencyExchange
-## Version: 1
+## Version: @project-version@
+## X-Date: @project-date-iso@
 ## Author: spags
+## X-Curse-Project-ID: 923662
 
 core.lua
