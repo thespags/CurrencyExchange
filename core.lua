@@ -85,7 +85,7 @@ local createFrame = function()
 end
 
 local isTarget = function(expectedId)
-    local targetGUID = UnitGUID("target")
+    local targetGUID = UnitGUID("npc")
     local npcId = targetGUID and select(6, strsplit("-", targetGUID))
     return npcId == expectedId
 end
@@ -103,7 +103,9 @@ end)
 local closeFrame = CreateFrame("Frame")
 closeFrame:RegisterEvent("MERCHANT_CLOSED")
 closeFrame:SetScript("OnEvent", function(self, event)
-    exchangeFrame:Hide()
+    if exchangeFrame and exchangeFrame:IsVisible() then
+        exchangeFrame:Hide()
+    end
 end)
 
 local updateFrame = CreateFrame("Frame")
