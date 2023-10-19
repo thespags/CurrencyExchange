@@ -18,6 +18,11 @@ local function linkSplit(link, name)
     return t
 end
 
+local function getEditBoxValue(editBox)
+    local text = editBox:GetText()
+    return text and tonumber(text) or 0
+end
+
 local createFrame = function()
     items = GetMerchantNumItems()
     exchangeFrame = CreateFrame("Frame", "CurrencyExchange", UIParent, "UIPanelDialogTemplate")
@@ -36,16 +41,52 @@ local createFrame = function()
     title:SetPoint("TOP", 0, -10)
     title:SetText("Currency Exchange")
 
-    local editBoxText = exchangeFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    editBoxText:SetPoint("TOP", -40, -40)
-    editBoxText:SetText("Amount:")
-
     local editBox = CreateFrame("EditBox", "CurrencyExchangeAmount", exchangeFrame, "InputBoxTemplate")
+    local leftButton = CreateFrame("Button", "CurrencyExchangeLeftArrow", exchangeFrame, "SecureActionButtonTemplate")
+    local rightButton = CreateFrame("Button", "CurrencyExchangeLeftArrow", exchangeFrame, "SecureActionButtonTemplate")
+
     editBox:SetNumeric(true)
     editBox:SetSize(60, 20)
-    editBox:SetPoint("TOP", 30, -35)
+    editBox:SetPoint("TOP", 0, -35)
     editBox:SetAutoFocus(false)
+    editBox:SetJustifyH("RIGHT")
+    editBox:SetTextInsets(0, 8, 2, 0)
     editBox:SetText("1")
+    editBox:SetScript("OnChar", function()
+        local value = getEditBoxValue(editBox)
+        if value <= 1 then
+            leftButton:Disable()
+        elseif value > 1 then
+            leftButton:Enable()
+        end
+    end)
+
+    leftButton:SetSize(16, 16)
+    leftButton:SetPoint("TOP", -42, -39)
+    leftButton:SetNormalTexture("Interface\\MoneyFrame\\Arrow-Left-Up")
+    leftButton:SetPushedTexture("Interface\\MoneyFrame\\Arrow-Left-Down")
+    leftButton:SetDisabledTexture("Interface\\MoneyFrame\\Arrow-Left-Disabled")
+    leftButton:Disable()
+    leftButton:SetScript("OnClick", function()
+        local value = getEditBoxValue(editBox) - 1
+        if value <= 1 then
+            leftButton:Disable()
+        end
+        editBox:SetText(value)
+    end)
+
+    rightButton:SetSize(16, 16)
+    rightButton:SetPoint("TOP", 40, -39)
+    rightButton:SetNormalTexture("Interface\\MoneyFrame\\Arrow-Right-Up")
+    rightButton:SetPushedTexture("Interface\\MoneyFrame\\Arrow-Right-Down")
+    rightButton:SetDisabledTexture("Interface\\MoneyFrame\\Arrow-Right-Disabled")
+    rightButton:SetScript("OnClick", function()
+        local value = getEditBoxValue(editBox) + 1
+        if value > 1 then
+            leftButton:Enable()
+        end
+        editBox:SetText(value)
+    end)
 
     local attentionText = exchangeFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     attentionText:SetPoint("TOP", 0, -60)
@@ -70,7 +111,7 @@ local createFrame = function()
         local currencyLink = select(3, GetMerchantItemCostItem(i, 1))
         local costCurrency = tonumber(linkSplit(currencyLink, "currency")[1])
         local buy = function(self, event, number)
-            number = number or tonumber(editBox:GetText())
+            number = number or  getEditBoxValue(editBox)
             local amount = C_CurrencyInfo.GetCurrencyInfo(costCurrency)["quantity"]
             if (number > amount) then     
                 local f = scripts[costCurrency]
